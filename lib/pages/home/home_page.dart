@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:curso/utils/tab_items.dart';
 import 'package:curso/widgets/bottom_navigation.dart';
 import 'package:curso/widgets/tab_navigator.dart';
+import 'package:provider/provider.dart';
+import 'package:curso/pages/search/search_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +35,7 @@ class AppState extends State<HomePage> {
     return WillPopScope(
       onWillPop: () async {
         final isFirstRouteInCurrentTab =
-        !await navigatorKeys[currentTab]!.currentState!.maybePop();
+            !await navigatorKeys[currentTab]!.currentState!.maybePop();
         if (isFirstRouteInCurrentTab) {
           // if not on the 'main' tab
           if (currentTab != TabItem.search) {
@@ -49,7 +51,9 @@ class AppState extends State<HomePage> {
       child: Scaffold(
         body: Stack(children: <Widget>[
           _buildOffstageNavigator(TabItem.profile),
-          _buildOffstageNavigator(TabItem.search),
+          _buildOffstageNavigator(
+            TabItem.search,
+          ),
           _buildOffstageNavigator(TabItem.map),
         ]),
         bottomNavigationBar: BottomNavigation(

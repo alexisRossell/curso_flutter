@@ -4,6 +4,8 @@ import 'package:curso/utils/images.dart' as images;
 import 'package:curso/routes/router.dart' as router;
 import 'package:curso/utils/validators.dart' as validators;
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:curso/pages/login/login_controller.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -156,30 +158,35 @@ class LoginPage extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        TextFormField(
-                          validator: validators.validateTextInput,
-                          decoration: const InputDecoration(
-                            hintText: "Ingresa tu contraseña",
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
+                        Consumer<LoginController>(
+                          builder: (context, loginController, widget) =>
+                              TextFormField(
+                            obscureText: loginController.obscurePassword,
+                            validator: validators.validateTextInput,
+                            decoration: InputDecoration(
+                              hintText: "Ingresa tu contraseña",
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  color: colors.lightBlue,
+                                ),
                               ),
-                              borderSide: BorderSide(
-                                color: colors.lightBlue,
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                borderSide: BorderSide(
+                                  color: colors.lightBlue,
+                                ),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              borderSide: BorderSide(
-                                color: colors.lightBlue,
-                              ),
-                            ),
-                            suffixIcon: IconButton(
-                              onPressed: null,
-                              icon: Icon(
-                                Icons.visibility_off_outlined,
+                              suffixIcon: IconButton(
+                                onPressed:
+                                    loginController.changeObscurePassword,
+                                icon: Icon(loginController.obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined),
                               ),
                             ),
                           ),
@@ -204,39 +211,48 @@ class LoginPage extends StatelessWidget {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.0546,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.popAndPushNamed(
-                                context, router.homeRoute);
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.791,
-                            height: MediaQuery.of(context).size.height * 0.0656,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colors.blackShadow,
-                                  offset: Offset(4, 4),
-                                  blurRadius: 12,
-                                  spreadRadius: -2,
-                                )
-                              ],
-                              color: colors.lightBlue,
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Ingresar ",
-                                style: TextStyle(
-                                  color: colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: "Outfit",
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 28.0,
+                        Consumer<LoginController>(
+                          builder: (context, loginController, widget) =>
+                              GestureDetector(
+                            onTap: () {
+                              loginController.login().then((value) {
+                                /*Solo si se hizo el login se llama a la siguiente pantalla*/
+                                if (value) {
+                                  Navigator.popAndPushNamed(
+                                      context, router.homeRoute);
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.791,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.0656,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
                                 ),
-                                textAlign: TextAlign.center,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colors.blackShadow,
+                                    offset: Offset(4, 4),
+                                    blurRadius: 12,
+                                    spreadRadius: -2,
+                                  )
+                                ],
+                                color: colors.lightBlue,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Ingresar ",
+                                  style: TextStyle(
+                                    color: colors.grey,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "Outfit",
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 28.0,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),
